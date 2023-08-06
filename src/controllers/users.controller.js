@@ -65,7 +65,7 @@ export async function getUserInfo(req, res) {
 
     const formattedObj = {
       ...user.rows[0],
-      shortenedUrls: urls.rows[0].map(url => ({
+      shortenedUrls: (urls.rows[0]).map(url => ({
         id: url.id,
         url: url.url,
         shortUrl: url.shortUrl,
