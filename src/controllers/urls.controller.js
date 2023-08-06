@@ -40,7 +40,7 @@ export async function getOpenUrls(req, res) {
 
     await db.query(`UPDATE urls SET "visitCount"=$1 WHERE "shortUrl"=$2;`, [url.rows[0].visitCount + 1, shortUrl]);
 
-    res.status(200).send({ message: "Updated url succesfully" }).redirect(url.rows[0].shortUrl);
+    res.status(200).redirect(url.rows[0].shortUrl);
   } catch (err) {
     res.status(500).send(err.message);
   }

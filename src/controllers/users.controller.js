@@ -43,8 +43,7 @@ export async function signIn(req, res) {
 }
 
 export async function getUserInfo(req, res) {
-  const { authorization } = req.headers;
-  const token = authorization?.replace("Bearer ", "");
+  const token = res.locals.rows[0].token;
 
   try {
     const user = await db.query(`
@@ -54,14 +53,14 @@ export async function getUserInfo(req, res) {
         JOIN urls ON sessions."userId" = urls."userId"
         WHERE token=$1
         GROUP BY sessions."userId", users.name;`,
-      [token]
+        [token]
     );
 
     if (!user.rowCount) return res.status(401).send({ message: "Failed to get user data" });
 
     const urls = await db.query(`
-        SELECT urls.id, urls.urls, urls."shortUrl", urls."visitCount" FROM urls WHERE urls."userId"=$1;`,
-      [user.rows[0].id]
+      SELECT urls.id, urls.url, urls."shortUrl", urls."visitCount" FROM urls WHERE urls."userId"=$1;`,
+        [user.rows[0].id]
     );
 
     const formattedObj = {
@@ -88,8 +87,8 @@ export async function getRanking(req, res) {
         LEFT JOIN urls ON users.id = urls."userId"
         GROUP BY users.id, users.name
         ORDER BY "visitCount" DESC
-        LIMIT 10
-    `);
+        LIMIT 10;`
+    );
 
     res.status(200).send(ranking.rows);
   } catch (err) {
