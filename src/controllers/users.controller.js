@@ -63,11 +63,9 @@ export async function getUserInfo(req, res) {
         [user.rows[0].id]
     );
 
-    const urlsFormatted = urls.rows[0];
-
     const formattedObj = {
       ...user.rows[0],
-      shortenedUrls: urlsFormatted.map(url => ({
+      shortenedUrls: urls.rows.map(url => ({
         id: url.id,
         url: url.url,
         shortUrl: url.shortUrl,
