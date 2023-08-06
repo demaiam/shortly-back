@@ -10,7 +10,6 @@ userRouter.post("/signup", validateSchema(schemaSignUp), signUp);
 userRouter.post("/signin", validateSchema(schemaSignIn), signIn);
 userRouter.get("/ranking", getRanking);
 
-userRouter.use(validateAuth);
-userRouter.get("/users/me", getUserInfo);
+userRouter.get("/users/me", validateAuth, getUserInfo);
 
 export default userRouter;

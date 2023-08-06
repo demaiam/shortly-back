@@ -6,7 +6,7 @@ export async function postUrl(req, res) {
   const session = res.locals;
 
   try {
-    const shortUrl = nanoid(url, 8);
+    const shortUrl = nanoid(8);
 
     await db.query(`INSERT INTO urls ("userId", url, "shortUrl") VALUES ($1, $2, $3);`, [session.rows[0].userId, url, shortUrl]);
     
@@ -48,12 +48,12 @@ export async function getOpenUrls(req, res) {
 
 export async function deleteUrl(req, res) {
   const { id } = req.params;
-  const user = res.locals.user;
+  const user = res.locals;
 
   try {
     const url = await db.query(`SELECT * FROM urls WHERE id=$1;`, [id]);
     if (!url.rowCount) return res.status(404).send("URL does not exist");
-    if (url.rows[0].userId !== user) return res.status(401).send({ message: "URL does not belong to this user" });
+    if (url.rows[0].userId !== user.rows[0].userId) return res.status(401).send({ message: "URL does not belong to this user" });
 
     await db.query("DELETE from urls WHERE id=$1;", [id]);
 
