@@ -3,18 +3,15 @@ import { nanoid } from "nanoid";
 
 export async function postUrl(req, res) {
   const { url } = req.body;
-  const { authorization } = req.headers;
-  const token = authorization?.replace("Bearer ", "");
+  const session = res.locals; 
 
   const shortUrl = nanoid(8);
 
   try {
-    const user = await db.query(`SELECT * FROM sessions WHERE token = $1;` [token]);
-    if (!user.rowCount) return res.status(404).send({ message: "User not found"});
+    
+    await db.query(`INSERT INTO urls ("userId", url, "shortUrl") VALUES ($1, $2, $3);`, [session.rows[0].userId, url, shortUrl]);
 
-    await db.query(`INSERT INTO urls ("userId", url, "shortUrl") VALUES ($1, $2, $3);`, [user.rows[0].userId, url, shortUrl]);
-
-    res.status(201).send({ id: user.rows[0].userId, shortUrl: shortUrl });
+    res.status(201).send({ id: session.rows[0].userId, shortUrl: shortUrl });
   } catch (err) {
     res.status(500).send(err.message);
   }
