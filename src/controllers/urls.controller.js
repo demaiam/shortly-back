@@ -3,11 +3,11 @@ import { nanoid } from "nanoid";
 
 export async function postUrl(req, res) {
   const { url } = req.body;
-  const session = res.locals; 
-
-  const shortUrl = nanoid(8);
+  const session = res.locals.session;
 
   try {
+    const shortUrl = nanoid(url, 8);
+
     await db.query(`INSERT INTO urls ("userId", url, "shortUrl") VALUES ($1, $2, $3);`, [session.rows[0].userId, url, shortUrl]);
     
     const newUrl = await db.query(`SELECT * FROM urls WHERE url=$1;`, [url]);
