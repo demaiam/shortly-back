@@ -22,7 +22,7 @@ export async function getUrlById(req, res) {
   const { id } = req.params;
 
   try {
-    const url = await db.query(`SELECT * FROM urls WHERE id=$1;` [id]);
+    const url = await db.query(`SELECT * FROM urls WHERE id=$1;`, [id]);
     if (!url.rowCount) return res.status(404).send({ message: "Url does not exist" });
 
     res.status(200).send({ id: url.rows[0].id, shortUrl: url.rows[0].shortUrl, url: url.rows[0].url });
