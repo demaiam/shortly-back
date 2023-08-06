@@ -8,10 +8,11 @@ export async function postUrl(req, res) {
   const shortUrl = nanoid(8);
 
   try {
-    
     await db.query(`INSERT INTO urls ("userId", url, "shortUrl") VALUES ($1, $2, $3);`, [session.rows[0].userId, url, shortUrl]);
+    
+    const newUrl = await db.query(`SELECT * FROM urls WHERE url=$1;`, [url]);
 
-    res.status(201).send({ id: session.rows[0].userId, shortUrl: shortUrl });
+    res.status(201).send({ id: newUrl.rows[0].id, shortUrl: newUrl.rows[0].shortUrl });
   } catch (err) {
     res.status(500).send(err.message);
   }
