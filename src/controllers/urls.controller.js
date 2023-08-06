@@ -3,7 +3,7 @@ import { nanoid } from "nanoid";
 
 export async function postUrl(req, res) {
   const { url } = req.body;
-  const session = res.locals.session;
+  const session = res.locals;
 
   try {
     const shortUrl = nanoid(url, 8);

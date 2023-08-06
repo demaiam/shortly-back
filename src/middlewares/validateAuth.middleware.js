@@ -10,7 +10,7 @@ export async function validateAuth(req, res, next) {
     const session = await db.query(`SELECT * FROM sessions WHERE token=$1;`, [token]);
     if (!session.rowCount) return res.status(401).send("Sign in to perform this action");
 
-    res.locals.session = session;
+    res.locals = session;
 
     next();
   } catch (err) {
