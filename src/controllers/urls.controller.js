@@ -10,7 +10,7 @@ export async function postUrl(req, res) {
 
   try {
     const user = await db.query(`SELECT * FROM sessions WHERE token = $1;` [token]);
-    await db.query(`INSERT INTO urls ("userId", url, "shortUrl") VALUES ($1, $2, $3);`, [user.userId, url, shortUrl]);
+    await db.query(`INSERT INTO urls ("userId", url, "shortUrl") VALUES ($1, $2, $3);`, [user.rows[0].userId, url, shortUrl]);
 
     res.status(201).send({ id: user.rows[0].userId, shortUrl: shortUrl });
   } catch (err) {
