@@ -47,7 +47,7 @@ export async function getUserInfo(req, res) {
 
   try {
     const user = await db.query(`
-      SELECT sessions."userId" AS "userId", users.name, SUM("visitCount") AS "visitCount"
+      SELECT sessions."userId" AS id, users.name, CAST((SUM("visitCount") AS "visitCount") AS int)
         FROM sessions
         JOIN users ON sessions."userId" = users.id
         JOIN urls ON sessions."userId" = urls."userId"
