@@ -60,7 +60,7 @@ export async function getUserInfo(req, res) {
 
     const urls = await db.query(`
       SELECT urls.id, urls.url, urls."shortUrl", urls."visitCount" FROM urls WHERE urls."userId"=$1;`,
-        [user.rows[0].userId]
+        [user.rows[0].id]
     );
 
     const formattedObj = {
