@@ -1,45 +1,21 @@
 import { db } from "../database/database.connection.js";
-import { v4 as uuid } from "uuid";
-import bcrypt from "bcrypt";
+
+import httpStatus from "http-status";
 
 export async function signUp(req, res) {
   const { name, email, password, confirmPassword } = req.body;
 
-  if (password !== confirmPassword) return res.status(422).send({ message: "Passwords do not match" });
+  await usersService.signUp(name, email, password, confirmPassword);
 
-  const hash = bcrypt.hashSync(password, 10);
-
-  try {
-    const user = await db.query(`SELECT * FROM users WHERE email=$1;`, [email]);
-    if (user.rowCount) return res.status(409).send({ message: "E-mail already in use" });
-
-    await db.query(`INSERT INTO users (name, email, password) VALUES ($1, $2, $3);`, [name, email, hash]);
-
-    res.status(201).send({ message: "Signed up succesfully" });
-  } catch (err) {
-    res.status(500).send(err.message);
-  }
+  return res.status(httpStatus.CREATED).send({ message: 'Signed up succesfully'});
 }
 
 export async function signIn(req, res) {
   const { email, password } = req.body;
 
-  try {
-    const user = await db.query(`SELECT * FROM users WHERE email=$1;`, [email]);
-    if (!user.rowCount) return res.status(401).send({ message: "User not found" });
+  const token = await usersService.signIn(email, password);
 
-    const isPasswordCorrect = bcrypt.compareSync(password, user.rows[0].password);
-    if (!isPasswordCorrect) return res.status(401).send({ message: "Incorrect password" });
-
-    await db.query(`DELETE FROM sessions WHERE "userId"=$1;`, [user.rows[0].id]);
-
-    const token = uuid();
-    await db.query(`INSERT INTO sessions ("userId", token) VALUES ($1, $2);`, [user.rows[0].id, token]);
-
-    res.status(200).send({ token: token });
-  } catch (err) {
-    res.status(500).send(err.message);
-  }
+  return res.status(httpStatus.OK).send(token);
 }
 
 export async function getUserInfo(req, res) {

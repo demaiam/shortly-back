@@ -1,7 +1,7 @@
 import { Router } from "express";
-import { validateSchema } from "../middlewares/validateSchema.middleware.js";
+import { validateSchema } from "../middlewares/validate.schema.middleware.js";
 import { schemaUrl } from "../schemas/url.schemas.js";
-import { validateAuth } from "../middlewares/validateAuth.middleware.js";
+import { validateAuth } from "../middlewares/validate.auth.middleware.js";
 import { postUrl, getUrlById, deleteUrl, getOpenUrls } from "../controllers/urls.controller.js";
 
 const urlsRouter = Router();
